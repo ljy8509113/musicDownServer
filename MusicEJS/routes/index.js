@@ -61,7 +61,36 @@ request(url, function(error, response, html){
 });
 
 function search(array){
+  var limit = 5;
+  youtube.setKey('AIzaSyAcali7jOIfHyqcsf5YJHHM6c3He4_52lI'); // API 키 입력
+  //// 검색 옵션 시작
+  youtube.addParam('order', 'rating'); // 평점 순으로 정렬
+  youtube.addParam('type', 'video');   // 타입 지정
+  // youtube.addParam('videoLicense', 'creativeCommon'); // 크리에이티브 커먼즈 아이템만 불러옴
+  //// 검색 옵션 끝
+  var word = "";
+  for (var i=0; i < array.length; i++){
+    var info = array[i];
+    console.log("array : " + array.length);
+    word = info.title + " " + info.artist;
+    console.log("word : " + word);
+    youtube.search(word, limit, function (err, result) { // 검색 실행
+        if (err) { console.log(err); return; } // 에러일 경우 에러공지하고 빠져나감
 
+        console.log(JSON.stringify(result, null, 2)); // 받아온 전체 리스트 출력
+
+        var items = result["items"]; // 결과 중 items 항목만 가져옴
+        for (var i in items) { 
+            var it = items[i];
+            var title = it["snippet"]["title"];
+            var video_id = it["id"]["videoId"];
+            var url = "https://www.youtube.com/watch?v=" + video_id;
+            console.log("제목 : " + title);
+            console.log("URL : " + url);
+            console.log("-----------");
+        }
+    });
+  }
 }
 
 module.exports = router;
